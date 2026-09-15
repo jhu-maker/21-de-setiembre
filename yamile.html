@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Yamile 🌼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night: #1c1330;
+    --night-deep: #120c22;
+    --plum: #4a3168;
+    --gold: #f2b705;
+    --gold-soft: #f7d774;
+    --amber: #e0912c;
+    --parchment: #f4ecd8;
+    --parchment-dark: #e8dcb8;
+    --ink: #382a1f;
+    --hedge: #2f4a2b;
+    --hedge-light: #3f6338;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background: radial-gradient(ellipse at 50% -10%, #2a1d45 0%, var(--night) 45%, var(--night-deep) 100%);
+    font-family:'EB Garamond', serif;
+    color: var(--parchment);
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  h1,h2,h3{ font-family:'Cormorant Garamond', serif; font-weight:600; letter-spacing:.02em; }
+
+  /* ---------- Starfield ---------- */
+  #stars{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .star{ position:absolute; width:2px; height:2px; background:var(--gold-soft); border-radius:50%; opacity:.6; animation: twinkle 3.5s ease-in-out infinite; }
+  @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:.9;} }
+
+  /* ---------- Falling petals ---------- */
+  #petals{ position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+  .petal{ position:absolute; top:-5%; font-size:1.1rem; opacity:.85; animation-name: fall; animation-timing-function: linear; animation-iteration-count: infinite; filter: drop-shadow(0 0 4px rgba(242,183,5,.35)); }
+  @keyframes fall{ 0%{ transform: translateY(-5vh) translateX(0) rotate(0deg); } 100%{ transform: translateY(105vh) translateX(var(--drift,20px)) rotate(360deg); } }
+
+  /* ---------- Decorative flower helpers ---------- */
+  .deco-flower{ position:absolute; pointer-events:none; opacity:.9; z-index:1; }
+  .flower-vine{ display:flex; justify-content:center; gap:.4rem; margin: 0 0 1.6rem; flex-wrap:wrap; opacity:.85; }
+  .flower-vine svg{ width:22px; height:22px; }
+
+  /* ---------- Envelope screen ---------- */
+  #envelope-screen{ position:relative; z-index:2; min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:2rem; transition: opacity .8s ease, visibility .8s ease; }
+  #envelope-screen.hidden{ opacity:0; visibility:hidden; position:absolute; inset:0; pointer-events:none; }
+  .envelope-wrap{ cursor:pointer; user-select:none; position:relative; }
+  .envelope{ width:min(78vw, 300px); height:min(52vw,200px); background: linear-gradient(160deg, var(--parchment-dark), var(--parchment)); border-radius:6px; position:relative; margin:0 auto 1.6rem; box-shadow: 0 18px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(90,49,104,.15) inset; transition: transform .35s ease; }
+  .envelope::before{ content:""; position:absolute; top:0; left:0; right:0; height:0; border-left: min(39vw,150px) solid transparent; border-right: min(39vw,150px) solid transparent; border-top: min(26vw,100px) solid #d8c9a0; filter: brightness(.92); }
+  .envelope-wrap:hover .envelope{ transform: translateY(-4px); }
+  .wax-seal{ position:absolute; left:50%; top:58%; transform:translate(-50%,-50%); width:56px; height:56px; border-radius:50%; background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--amber) 70%, #a85f13 100%); color:#3a2200; font-family:'Cormorant Garamond',serif; font-weight:700; font-size:1.5rem; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 10px rgba(0,0,0,.4); animation: pulse-seal 2.6s ease-in-out infinite; z-index:3; }
+  @keyframes pulse-seal{ 0%,100%{ box-shadow:0 4px 10px rgba(0,0,0,.4), 0 0 0 0 rgba(242,183,5,.5);} 50%{ box-shadow:0 4px 10px rgba(0,0,0,.4), 0 0 0 10px rgba(242,183,5,0);} }
+  .envelope-caption{ font-size:1.15rem; color:var(--gold-soft); margin-top:.4rem; font-style:italic; }
+  .envelope-hint{ font-size:.85rem; color:#c9bce0; margin-top:.3rem; letter-spacing:.03em; }
+
+  /* ---------- Main content ---------- */
+  #main{ position:relative; z-index:2; max-width:800px; margin:0 auto; padding: 2.6rem 1.2rem 5rem; opacity:0; transform: translateY(16px); transition: opacity .9s ease, transform .9s ease; }
+  #main.show{ opacity:1; transform:none; }
+
+  header.hero{ text-align:center; margin-bottom:2rem; position:relative; }
+  header.hero .eyebrow{ color: var(--gold-soft); font-style:italic; font-size:1.05rem; }
+  header.hero h1{ font-size: clamp(2rem, 6vw, 2.9rem); margin:.3rem 0 .5rem; color:var(--gold-soft); text-shadow: 0 0 18px rgba(242,183,5,.35); }
+  header.hero .from{ font-family:'Caveat', cursive; font-size:1.4rem; color:var(--parchment); }
+
+  /* ---------- Progress trail ---------- */
+  #trail-wrap{ margin: 1.8rem 0 3rem; }
+  #trail{ display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap; }
+  .trail-node{ display:flex; flex-direction:column; align-items:center; gap:.35rem; cursor:pointer; background:none; border:none; color:inherit; font-family:'EB Garamond',serif; padding:.2rem; }
+  .trail-node[disabled]{ cursor:not-allowed; }
+  .node-circle{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.15rem; border:2px solid rgba(247,215,116,.3); background: rgba(74,49,104,.4); transition: all .25s ease; }
+  .trail-node.locked .node-circle{ background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.12); color:#6b6280; }
+  .trail-node.current .node-circle{ background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--amber)); border-color: var(--gold-soft); color:#3a2200; box-shadow:0 0 14px rgba(242,183,5,.5); animation: pulse-seal 2.2s ease-in-out infinite; }
+  .trail-node.done .node-circle{ background: rgba(120,183,80,.5); border-color:#9fd67e; }
+  .node-label{ font-size:.72rem; color:#c9bce0; max-width:70px; text-align:center; line-height:1.15; }
+  .trail-node.locked .node-label{ color:#6b6280; }
+  .trail-dash{ width:26px; height:2px; background: repeating-linear-gradient(90deg, rgba(247,215,116,.4) 0 6px, transparent 6px 10px); margin: 0 2px 1.4rem; }
+
+  section{ margin-bottom:3.4rem; position:relative; }
+  section h2{ font-size:1.6rem; color:var(--gold-soft); margin-bottom:.3rem; border-bottom:1px solid rgba(247,215,116,.25); padding-bottom:.5rem; display:flex; align-items:center; gap:.5rem; }
+  section p.lede{ color:#d7cce9; font-size:1.03rem; margin-top:.5rem; }
+
+  .level-badge{ font-size:.75rem; text-transform:none; background: rgba(247,215,116,.15); color:var(--gold-soft); padding:.15rem .6rem; border-radius:12px; border:1px solid rgba(247,215,116,.3); }
+
+  /* locked section overlay */
+  .level-body{ position:relative; }
+  .locked-overlay{ position:absolute; inset:0; backdrop-filter: blur(3px); background: rgba(18,12,34,.55); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.4rem; text-align:center; padding:1rem; z-index:5; }
+  .locked-overlay span.lock-icon{ font-size:1.6rem; }
+  .locked .level-content{ filter: blur(2px); pointer-events:none; user-select:none; }
+  .level-content{ transition: filter .3s ease; }
+
+  .level-complete-tag{ display:none; margin-top:1rem; text-align:center; color:#9fd67e; font-style:italic; }
+  .level-complete-tag.show{ display:block; }
+  .next-btn{ display:none; margin: 1.2rem auto 0; background: var(--plum); color:var(--parchment); border:none; padding:.6rem 1.3rem; border-radius:22px; cursor:pointer; font-family:'EB Garamond',serif; font-size:1rem; }
+  .next-btn.show{ display:block; }
+  .next-btn:hover{ background:#5f3f86; }
+
+  /* ---------- Garden ---------- */
+  .flowers{ display:flex; flex-wrap:wrap; gap:1.1rem; justify-content:center; margin-top:1.6rem; }
+  .flower-btn{ background:none; border:none; cursor:pointer; padding:0; width:60px; height:74px; position:relative; transition: transform .25s ease; }
+  .flower-btn:hover{ transform: translateY(-4px) scale(1.05); }
+  .flower-btn svg{ width:100%; height:100%; display:block; }
+  #garden-message{ margin-top:1.4rem; min-height:2.4rem; text-align:center; font-style:italic; color: var(--gold-soft); font-size:1.1rem; }
+  #garden-progress{ text-align:center; margin-top:.5rem; font-size:.85rem; color:#b9adcf; }
+
+  /* ---------- Maze ---------- */
+  .maze-wrap{ display:flex; flex-direction:column; align-items:center; gap:1rem; margin-top:1.4rem; }
+  #maze-grid{ display:grid; gap:2px; background: rgba(0,0,0,.25); padding:6px; border-radius:8px; }
+  .cell{ width: 32px; height:32px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+  .cell.wall{ background: linear-gradient(160deg, var(--hedge-light), var(--hedge)); }
+  .cell.path{ background: rgba(244,236,216,.08); }
+  .cell.goal{ background: rgba(242,183,5,.18); }
+  .cell.player{ position:relative; }
+  .cell.player::after{ content:"🧙"; font-size:1.1rem; }
+  .maze-controls{ display:grid; grid-template-columns:repeat(3,44px); grid-template-rows:repeat(3,44px); gap:4px; }
+  .maze-controls button{ background: rgba(74,49,104,.5); border:1px solid rgba(247,215,116,.3); color:var(--parchment); border-radius:8px; cursor:pointer; font-size:1.1rem; }
+  .maze-controls button:hover{ background: rgba(247,215,116,.2); }
+  #maze-status{ min-height:1.4rem; color:var(--gold-soft); font-style:italic; text-align:center; }
+  .maze-hint{ font-size:.85rem; color:#b9adcf; text-align:center; }
+
+  /* ---------- Book ---------- */
+  .book-frame{ background: linear-gradient(160deg, var(--parchment), var(--parchment-dark)); color: var(--ink); border-radius:8px; padding: 2rem 1.8rem; box-shadow: 0 14px 34px rgba(0,0,0,.4); position:relative; min-height:200px; }
+  .book-frame::before{ content:""; position:absolute; left:0; top:8%; bottom:8%; width:3px; background: linear-gradient(var(--amber), var(--plum)); opacity:.5; }
+  .page{ display:none; animation: page-in .4s ease; }
+  .page.active{ display:block; }
+  @keyframes page-in{ from{ opacity:0; transform: translateX(8px);} to{ opacity:1; transform:none; } }
+  .page .quote-mark{ font-family:'Cormorant Garamond', serif; font-size:2.4rem; color:var(--amber); line-height:0; position:relative; top:.6rem; }
+  .page p{ font-size:1.1rem; line-height:1.6; margin:.4rem 0 0; }
+  .page .tag{ display:block; margin-top:1rem; font-style:italic; color:var(--plum); font-size:.9rem; }
+  .book-controls{ display:flex; align-items:center; justify-content:center; gap:1.2rem; margin-top:1.2rem; }
+  .book-controls button{ background: var(--plum); color:var(--parchment); border:none; padding:.5rem 1rem; border-radius:20px; cursor:pointer; font-family:'EB Garamond',serif; font-size:1rem; }
+  .book-controls button:hover{ background:#5f3f86; }
+  #page-indicator{ color:#c9bce0; font-size:.9rem; min-width:52px; text-align:center; }
+
+  /* ---------- Trivia ---------- */
+  .trivia-card{ background: rgba(74,49,104,.35); border:1px solid rgba(247,215,116,.25); border-radius:10px; padding:1.4rem 1.5rem; margin-top:1.2rem; }
+  .trivia-q{ font-size:1.05rem; margin-bottom:.9rem; }
+  .trivia-options{ display:flex; flex-direction:column; gap:.55rem; }
+  .trivia-options button{ text-align:left; background: rgba(244,236,216,.06); color:var(--parchment); border:1px solid rgba(247,215,116,.3); padding:.55rem .8rem; border-radius:8px; cursor:pointer; font-family:'EB Garamond',serif; font-size:1rem; }
+  .trivia-options button:hover{ background: rgba(247,215,116,.15); }
+  .trivia-options button.correct{ background: rgba(120,183,80,.35); border-color:#78b750; }
+  .trivia-options button.wrong{ background: rgba(200,80,80,.3); border-color:#c85050; }
+  #trivia-score{ text-align:center; margin-top:1rem; color:#c9bce0; font-size:.9rem; }
+
+  /* ---------- Wand ---------- */
+  .wand-area{ text-align:center; }
+  #wand-btn{ background: linear-gradient(180deg, var(--gold-soft), var(--amber)); border:none; color:#3a2200; padding:.85rem 1.9rem; border-radius:26px; font-size:1.1rem; cursor:pointer; font-family:'Cormorant Garamond',serif; font-weight:600; box-shadow: 0 8px 22px rgba(242,183,5,.3); }
+  #wand-btn:hover{ transform: translateY(-2px); }
+  #spell-result{ margin-top:1.3rem; min-height:3rem; font-size:1.1rem; color:var(--gold-soft); }
+  .sparkle-burst{ position:relative; height:0; }
+  .spark{ position:absolute; width:5px; height:5px; background:var(--gold-soft); border-radius:50%; animation: spark-out .9s ease-out forwards; }
+  @keyframes spark-out{ 0%{ transform: translate(0,0) scale(1); opacity:1; } 100%{ transform: translate(var(--sx), var(--sy)) scale(0); opacity:0; } }
+
+  /* ---------- Letter ---------- */
+  .letter{ background: linear-gradient(170deg, var(--parchment), var(--parchment-dark)); color:var(--ink); border-radius:6px; padding:2rem 1.8rem; box-shadow:0 14px 34px rgba(0,0,0,.4); font-size:1.1rem; line-height:1.75; min-height:200px; white-space:pre-wrap; }
+  .letter .cursor{ display:inline-block; width:2px; background:var(--ink); animation: blink 1s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .signature{ font-family:'Caveat', cursive; font-size:1.9rem; color:var(--plum); margin-top:.6rem; display:block; }
+
+  footer{ text-align:center; padding-top:1rem; color:#b9adcf; font-size:.93rem; }
+  footer .owl{ font-size:1.6rem; }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
+  button:focus-visible, .flower-btn:focus-visible{ outline:2px solid var(--gold-soft); outline-offset:3px; }
+
+  @media (max-width:480px){
+    .node-label{ display:none; }
+    .trail-dash{ width:14px; }
+    .cell{ width:26px; height:26px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="petals"></div>
+
+<div id="envelope-screen">
+  <div class="envelope-wrap" onclick="openEnvelope()" role="button" tabindex="0" aria-label="Abrir carta mágica" onkeypress="if(event.key==='Enter')openEnvelope()">
+    <div class="envelope"><div class="wax-seal">N</div></div>
+    <p class="envelope-caption">Un mapa mágico llegó para ti, Yamile</p>
+    <p class="envelope-hint">toca el sello para abrirlo</p>
+  </div>
+</div>
+
+<div id="main">
+  <header class="hero">
+    <p class="eyebrow">21 de setiembre · Día de la Primavera</p>
+    <h1>El mapa del merodeador de Yamile</h1>
+    <p class="from">de tu mejor amigo, Nuno 🦉</p>
+  </header>
+
+  <div class="flower-vine" id="vine-top"></div>
+
+  <div id="trail-wrap">
+    <div id="trail"></div>
+  </div>
+
+  <!-- NIVEL 1: JARDÍN -->
+  <section id="lvl-1" data-level="1">
+    <h2>🌼 Nivel 1 · El jardín encantado <span class="level-badge">florece las 6 flores</span></h2>
+    <div class="level-body">
+      <div class="level-content">
+        <p class="lede">En Hogwarts las flores no solo crecen con agua y sol, sino con hechizos. Toca cada una para que florezca y revele su mensaje.</p>
+        <div class="flowers" id="flowers"></div>
+        <p id="garden-message"></p>
+        <p id="garden-progress">0 de 6 flores florecidas</p>
+      </div>
+    </div>
+    <p class="level-complete-tag" id="tag-1">✨ ¡Jardín completo! El siguiente nivel se ha desbloqueado.</p>
+    <button class="next-btn" id="next-1" onclick="goTo(2)">Ir al nivel 2 →</button>
+  </section>
+
+  <div class="flower-vine"></div>
+
+  <!-- NIVEL 2: LABERINTO -->
+  <section id="lvl-2" data-level="2">
+    <h2>🌿 Nivel 2 · El laberinto del bosque prohibido <span class="level-badge">llega a la flor dorada</span></h2>
+    <div class="level-body">
+      <div class="locked-overlay" id="lock-2"><span class="lock-icon">🔒</span><span>Completa el nivel 1 para desbloquear el laberinto</span></div>
+      <div class="level-content" id="content-2">
+        <p class="lede">Guía a tu mago por el seto hasta la flor dorada. Usa las flechas del teclado o los botones.</p>
+        <div class="maze-wrap">
+          <div id="maze-grid"></div>
+          <div class="maze-controls">
+            <span></span><button onclick="movePlayer(0,-1)" aria-label="arriba">↑</button><span></span>
+            <button onclick="movePlayer(-1,0)" aria-label="izquierda">←</button><span></span><button onclick="movePlayer(1,0)" aria-label="derecha">→</button>
+            <span></span><button onclick="movePlayer(0,1)" aria-label="abajo">↓</button><span></span>
+          </div>
+          <p id="maze-status"></p>
+          <p class="maze-hint">tip: también funcionan las flechas del teclado</p>
+        </div>
+      </div>
+    </div>
+    <p class="level-complete-tag" id="tag-2">✨ ¡Saliste del laberinto! Siguiente nivel desbloqueado.</p>
+    <button class="next-btn" id="next-2" onclick="goTo(3)">Ir al nivel 3 →</button>
+  </section>
+
+  <div class="flower-vine"></div>
+
+  <!-- NIVEL 3: LIBRO -->
+  <section id="lvl-3" data-level="3">
+    <h2>📖 Nivel 3 · El libro que nunca termina <span class="level-badge">lee las 4 páginas</span></h2>
+    <div class="level-body">
+      <div class="locked-overlay" id="lock-3"><span class="lock-icon">🔒</span><span>Sal del laberinto para desbloquear el libro</span></div>
+      <div class="level-content" id="content-3">
+        <p class="lede">Como buena lectora, sé que ninguna historia se cuenta de una sola vez. Pasa las páginas de este pequeño libro hecho para ti.</p>
+        <div class="book-frame">
+          <div class="page active" data-page="1"><span class="quote-mark">“</span><p>Hay amigas que son como la Sala de los Menesteres: aparecen justo cuando más las necesitas y siempre tienen exactamente lo que hace falta.</p><span class="tag">— capítulo uno</span></div>
+          <div class="page" data-page="2"><span class="quote-mark">“</span><p>Si tu amistad fuera una casa de Hogwarts, sería una donde no hace falta elegir entre valentía, lealtad, astucia o sabiduría: las tienes todas cuando se trata de cuidar a quienes quieres.</p><span class="tag">— capítulo dos</span></div>
+          <div class="page" data-page="3"><span class="quote-mark">“</span><p>Dicen que la felicidad se puede encontrar incluso en los momentos más oscuros, si uno recuerda encender la luz. Tú eres una de esas luces para las personas que te rodean.</p><span class="tag">— capítulo tres</span></div>
+          <div class="page" data-page="4"><span class="quote-mark">“</span><p>Que este 21 de setiembre florezca como tus flores amarillas favoritas: con la cara siempre vuelta hacia lo bueno que está por venir.</p><span class="tag">— capítulo final</span></div>
+        </div>
+        <div class="book-controls">
+          <button onclick="prevPage()">← anterior</button>
+          <span id="page-indicator">1 / 4</span>
+          <button onclick="nextPage()">siguiente →</button>
+        </div>
+      </div>
+    </div>
+    <p class="level-complete-tag" id="tag-3">✨ ¡Terminaste el libro! Siguiente nivel desbloqueado.</p>
+    <button class="next-btn" id="next-3" onclick="goTo(4)">Ir al nivel 4 →</button>
+  </section>
+
+  <div class="flower-vine"></div>
+
+  <!-- NIVEL 4: TRIVIA -->
+  <section id="lvl-4" data-level="4">
+    <h2>🪶 Nivel 4 · Examen de Encantamientos <span class="level-badge">responde las 3 preguntas</span></h2>
+    <div class="level-body">
+      <div class="locked-overlay" id="lock-4"><span class="lock-icon">🔒</span><span>Termina el libro para desbloquear el examen</span></div>
+      <div class="level-content" id="content-4">
+        <p class="lede">Tres preguntas rápidas, solo por diversión.</p>
+        <div class="trivia-card" id="trivia-card"></div>
+        <p id="trivia-score"></p>
+      </div>
+    </div>
+    <p class="level-complete-tag" id="tag-4">✨ ¡Aprobaste el examen! Siguiente nivel desbloqueado.</p>
+    <button class="next-btn" id="next-4" onclick="goTo(5)">Ir al nivel 5 →</button>
+  </section>
+
+  <div class="flower-vine"></div>
+
+  <!-- NIVEL 5: VARITA -->
+  <section id="lvl-5" data-level="5">
+    <h2>🪄 Nivel 5 · Lanza un hechizo <span class="level-badge">toca la varita</span></h2>
+    <div class="level-body">
+      <div class="locked-overlay" id="lock-5"><span class="lock-icon">🔒</span><span>Aprueba el examen para desbloquear la varita</span></div>
+      <div class="level-content" id="content-5">
+        <p class="lede">Toma tu varita imaginaria y descubre qué deseo mágico te tengo guardado hoy.</p>
+        <div class="wand-area">
+          <button id="wand-btn" onclick="castSpell(event)">✨ Lumos</button>
+          <div class="sparkle-burst" id="sparkle-burst"></div>
+          <p id="spell-result"></p>
+        </div>
+      </div>
+    </div>
+    <p class="level-complete-tag" id="tag-5">✨ ¡Hechizo lanzado! Tu carta final se ha desbloqueado.</p>
+    <button class="next-btn" id="next-5" onclick="goTo(6)">Ir a la carta final →</button>
+  </section>
+
+  <div class="flower-vine"></div>
+
+  <!-- NIVEL FINAL: CARTA -->
+  <section id="lvl-6" data-level="6">
+    <h2>💛 Nivel final · Una carta, sin lechuza</h2>
+    <div class="level-body">
+      <div class="locked-overlay" id="lock-6"><span class="lock-icon">🔒</span><span>Completa los 5 niveles anteriores para leer la carta</span></div>
+      <div class="level-content" id="content-6">
+        <div class="letter" id="letter-text"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="flower-vine" id="vine-bottom"></div>
+
+  <footer>
+    <p class="owl">🦉</p>
+    <p>Hecho con magia (y bastante JavaScript) por Nuno, para Yamile.</p>
+  </footer>
+</div>
+
+<script>
+function flowerSVG(bloomed, size){
+  size = size || 64;
+  return `
+  <svg class="petal-svg" viewBox="0 0 64 78" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size*78/64}">
+    <line x1="32" y1="78" x2="32" y2="40" stroke="#4f7a3a" stroke-width="4" stroke-linecap="round"/>
+    <g transform="translate(32,28)">
+      ${[0,60,120,180,240,300].map(a=>`<ellipse rx="7" ry="16" fill="${bloomed?'#f7d774':'#c9b98f'}" transform="rotate(${a}) translate(0,-13)"/>`).join('')}
+      <circle r="8" fill="${bloomed?'#e0912c':'#8a7a5a'}"/>
+    </g>
+  </svg>`;
+}
+function smallFlower(){
+  return `<svg viewBox="0 0 64 78" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(32,40)">
+      ${[0,72,144,216,288].map(a=>`<ellipse rx="7" ry="15" fill="#f7d774" transform="rotate(${a}) translate(0,-12)"/>`).join('')}
+      <circle r="7" fill="#e0912c"/>
+    </g></svg>`;
+}
+
+(function(){
+  const starsEl = document.getElementById('stars');
+  for(let i=0;i<70;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    s.style.left = Math.random()*100+'vw';
+    s.style.top = Math.random()*70+'vh';
+    s.style.animationDelay = (Math.random()*3.5)+'s';
+    const size = (Math.random()*1.6+1).toFixed(1);
+    s.style.width = size+'px'; s.style.height = size+'px';
+    starsEl.appendChild(s);
+  }
+})();
+
+(function(){
+  const container = document.getElementById('petals');
+  const symbols = ['🌼','🌻','✨'];
+  function spawnPetal(){
+    const p = document.createElement('div');
+    p.className='petal';
+    p.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    p.style.left = Math.random()*100+'vw';
+    const duration = 9+Math.random()*7;
+    p.style.animationDuration = duration+'s';
+    p.style.setProperty('--drift', (Math.random()*140-70)+'px');
+    p.style.fontSize = (0.8+Math.random()*0.9)+'rem';
+    container.appendChild(p);
+    setTimeout(()=>p.remove(), duration*1000+500);
+  }
+  setInterval(spawnPetal, 650);
+  for(let i=0;i<8;i++) setTimeout(spawnPetal, i*300);
+})();
+
+document.querySelectorAll('.flower-vine').forEach(vine=>{
+  const n = 9;
+  for(let i=0;i<n;i++){
+    const s = document.createElement('span');
+    s.innerHTML = smallFlower();
+    vine.appendChild(s);
+  }
+});
+
+/* ---------------- Envelope ---------------- */
+function openEnvelope(){
+  document.getElementById('envelope-screen').classList.add('hidden');
+  const main = document.getElementById('main');
+  main.classList.add('show');
+  setTimeout(()=> main.scrollIntoView({behavior:'smooth', block:'start'}), 200);
+}
+
+const levelMeta = [
+  {n:1, icon:'🌼', label:'Jardín'},
+  {n:2, icon:'🌿', label:'Laberinto'},
+  {n:3, icon:'📖', label:'Libro'},
+  {n:4, icon:'🪶', label:'Examen'},
+  {n:5, icon:'🪄', label:'Varita'},
+  {n:6, icon:'💛', label:'Carta'}
+];
+let unlockedLevel = 1;
+let completedLevels = new Set();
+
+function renderTrail(){
+  const trail = document.getElementById('trail');
+  trail.innerHTML = '';
+  levelMeta.forEach((lvl, i)=>{
+    if(i>0){
+      const dash = document.createElement('div');
+      dash.className='trail-dash';
+      trail.appendChild(dash);
+    }
+    const btn = document.createElement('button');
+    let state = 'locked';
+    if(completedLevels.has(lvl.n)) state='done';
+    else if(lvl.n === unlockedLevel) state='current';
+    else if(lvl.n < unlockedLevel) state='current';
+    btn.className = 'trail-node '+state;
+    btn.disabled = state==='locked';
+    btn.innerHTML = `<span class="node-circle">${state==='done' ? '✓' : lvl.icon}</span><span class="node-label">${lvl.label}</span>`;
+    btn.addEventListener('click', ()=> goTo(lvl.n));
+    trail.appendChild(btn);
+  });
+}
+renderTrail();
+
+function goTo(n){
+  if(n > unlockedLevel) return;
+  document.getElementById('lvl-'+n).scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function completeLevel(n){
+  if(completedLevels.has(n)) return;
+  completedLevels.add(n);
+  const tag = document.getElementById('tag-'+n);
+  if(tag) tag.classList.add('show');
+  const nextBtn = document.getElementById('next-'+n);
+  if(nextBtn) nextBtn.classList.add('show');
+  if(n+1 <= 6){
+    unlockedLevel = Math.max(unlockedLevel, n+1);
+    const lock = document.getElementById('lock-'+(n+1));
+    const section = document.getElementById('lvl-'+(n+1));
+    if(lock) lock.remove();
+    if(section) section.classList.remove('locked');
+  }
+  renderTrail();
+}
+
+const flowerMessages = [
+  "Cada libro que terminas te vuelve un poquito más sabia, como Hermione con un giratiempo extra de tiempo libre.",
+  "Ojalá esta primavera te traiga tantas cosas buenas como capítulos tiene tu saga favorita.",
+  "Eres de esas amigas que se sienten como llegar a la Sala Común después de un día largo: cálida y segura.",
+  "Que nunca te falte una buena historia que leer ni un buen amigo con quien hablar de ella.",
+  "Feliz día de la primavera, Yamile. Que florezcas donde estés plantada.",
+  "Gracias por ser una amiga tan real, sin pociones ni hechizos de por medio."
+];
+const flowersWrap = document.getElementById('flowers');
+let bloomedCount = 0;
+flowerMessages.forEach((msg, i)=>{
+  const btn = document.createElement('button');
+  btn.className='flower-btn';
+  btn.setAttribute('aria-label','Flor mágica '+(i+1));
+  btn.innerHTML = flowerSVG(false);
+  btn.addEventListener('click', ()=>{
+    if(btn.classList.contains('bloomed')) return;
+    btn.classList.add('bloomed');
+    btn.innerHTML = flowerSVG(true);
+    bloomedCount++;
+    document.getElementById('garden-message').textContent = msg;
+    document.getElementById('garden-progress').textContent = bloomedCount+' de 6 flores florecidas';
+    if(bloomedCount === flowerMessages.length) completeLevel(1);
+  });
+  flowersWrap.appendChild(btn);
+});
+
+// 0 = path, 1 = wall
+const mazeMap = [
+  [0,0,0,1,0,0,0],
+  [1,1,0,1,0,1,0],
+  [0,0,0,0,0,1,0],
+  [0,1,1,1,0,1,0],
+  [0,1,0,0,0,1,0],
+  [0,1,0,1,1,1,0],
+  [0,0,0,1,0,0,0]
+];
+const mazeRows = mazeMap.length, mazeCols = mazeMap[0].length;
+let player = {x:0,y:0};
+const goal = {x:mazeCols-1, y:mazeRows-1};
+const mazeGrid = document.getElementById('maze-grid');
+mazeGrid.style.gridTemplateColumns = `repeat(${mazeCols}, 32px)`;
+
+function renderMaze(){
+  mazeGrid.innerHTML = '';
+  for(let y=0;y<mazeRows;y++){
+    for(let x=0;x<mazeCols;x++){
+      const cell = document.createElement('div');
+      const isWall = mazeMap[y][x]===1;
+      const isGoal = x===goal.x && y===goal.y;
+      const isPlayer = x===player.x && y===player.y;
+      cell.className = 'cell ' + (isWall?'wall':(isGoal?'goal':'path')) + (isPlayer?' player':'');
+      if(isGoal && !isPlayer) cell.textContent = '🌼';
+      mazeGrid.appendChild(cell);
+    }
+  }
+}
+renderMaze();
+
+function movePlayer(dx, dy){
+  if(unlockedLevel < 2) return;
+  if(completedLevels.has(2)) return;
+  const nx = player.x+dx, ny = player.y+dy;
+  if(nx<0||ny<0||nx>=mazeCols||ny>=mazeRows) return;
+  if(mazeMap[ny][nx]===1) return;
+  player.x=nx; player.y=ny;
+  renderMaze();
+  if(player.x===goal.x && player.y===goal.y){
+    document.getElementById('maze-status').textContent = '¡Llegaste a la flor dorada! 🌼';
+    completeLevel(2);
+  }
+}
+document.addEventListener('keydown', (e)=>{
+  const map = {ArrowUp:[0,-1], ArrowDown:[0,1], ArrowLeft:[-1,0], ArrowRight:[1,0]};
+  if(map[e.key]){ e.preventDefault(); movePlayer(map[e.key][0], map[e.key][1]); }
+});
+
+const pages = document.querySelectorAll('.page');
+let currentPage = 0;
+function renderPage(){
+  pages.forEach((p,i)=> p.classList.toggle('active', i===currentPage));
+  document.getElementById('page-indicator').textContent = (currentPage+1)+' / '+pages.length;
+  if(currentPage === pages.length-1) completeLevel(3);
+}
+function nextPage(){ currentPage = (currentPage+1)%pages.length; renderPage(); }
+function prevPage(){ currentPage = (currentPage-1+pages.length)%pages.length; renderPage(); }
+
+const questions = [
+  { q: "¿Qué flor es famosa por girar siempre hacia el sol?", options: ["Girasol","Orquídea","Cactus"], correct: 0 },
+  { q: "¿Cómo se llama el hechizo que produce luz en la punta de la varita?", options: ["Wingardium Leviosa","Lumos","Expecto Patronum"], correct: 1 },
+  { q: "¿Qué celebra el 21 de setiembre en Perú?", options: ["Día del Libro","Día de la Primavera y la Juventud","Día del Amigo"], correct: 1 }
+];
+let score = 0, answered = 0;
+const triviaCard = document.getElementById('trivia-card');
+function renderTrivia(){
+  triviaCard.innerHTML = '';
+  questions.forEach((item, qi)=>{
+    const wrap = document.createElement('div');
+    wrap.style.marginBottom = qi < questions.length-1 ? '1.6rem' : '0';
+    const qEl = document.createElement('p');
+    qEl.className='trivia-q';
+    qEl.textContent = (qi+1)+'. '+item.q;
+    wrap.appendChild(qEl);
+    const opts = document.createElement('div');
+    opts.className='trivia-options';
+    item.options.forEach((opt, oi)=>{
+      const b = document.createElement('button');
+      b.textContent = opt;
+      b.addEventListener('click', ()=> handleAnswer(b, opts, oi===item.correct));
+      opts.appendChild(b);
+    });
+    wrap.appendChild(opts);
+    triviaCard.appendChild(wrap);
+  });
+}
+function handleAnswer(btn, group, isCorrect){
+  if(group.dataset.answered) return;
+  group.dataset.answered = "1";
+  Array.from(group.children).forEach(b=> b.disabled = true);
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  answered++;
+  if(isCorrect) score++;
+  document.getElementById('trivia-score').textContent =
+    answered === questions.length
+      ? 'Terminaste: '+score+' de '+questions.length+' correctas.'
+      : 'Aciertos hasta ahora: '+score;
+  if(answered === questions.length) completeLevel(4);
+}
+renderTrivia();
+
+const spellMessages = [
+  "Accio felicidad: que la buena suerte llegue a ti este año.",
+  "Expecto Patronum: que siempre tengas un buen recuerdo al que aferrarte en días grises.",
+  "Wingardium Leviosa: que tus proyectos y tus lecturas siempre encuentren su vuelo.",
+  "Alohomora: que se abran todas las puertas buenas que estás esperando.",
+  "Protego: que nada ni nadie apague tus ganas de seguir creciendo."
+];
+function castSpell(e){
+  const result = document.getElementById('spell-result');
+  const msg = spellMessages[Math.floor(Math.random()*spellMessages.length)];
+  result.textContent = msg;
+  const burst = document.getElementById('sparkle-burst');
+  const rect = e.target.getBoundingClientRect();
+  for(let i=0;i<14;i++){
+    const s = document.createElement('div');
+    s.className='spark';
+    const angle = Math.random()*Math.PI*2;
+    const dist = 40+Math.random()*60;
+    s.style.setProperty('--sx', Math.cos(angle)*dist+'px');
+    s.style.setProperty('--sy', Math.sin(angle)*dist+'px');
+    s.style.left = (rect.width/2)+'px';
+    s.style.top = '0px';
+    burst.appendChild(s);
+    setTimeout(()=> s.remove(), 950);
+  }
+  completeLevel(5);
+}
+
+const letterText = `Querida Yamile:
+
+Si llegaste hasta aquí, cruzaste un jardín, un laberinto, un libro y un examen de Encantamientos... y aun así seguiste. Un poco como tú en la vida real.
+
+Hoy es 21 de setiembre y la primavera llega con flores amarillas, como las que más te gustan. Pensé que ningún regalo comprado le hacía justicia a lo mucho que valoro tu amistad, así que preferí construirte todo este pequeño mapa mágico, con un poco de Harry Potter y un poco de tus libros, porque así te imagino: siempre con una historia entre las manos.
+
+Ojalá esta primavera te traiga los capítulos más lindos de tu propia historia.
+
+Con cariño, tu amigo de siempre,
+`;
+let letterStarted = false;
+function typeLetter(){
+  if(letterStarted) return;
+  letterStarted = true;
+  const el = document.getElementById('letter-text');
+  el.textContent = '';
+  const cursor = document.createElement('span');
+  cursor.className='cursor';
+  cursor.textContent = '\u00A0';
+  let i = 0;
+  function step(){
+    if(i <= letterText.length){
+      el.textContent = letterText.slice(0, i);
+      el.appendChild(cursor);
+      i += 2;
+      setTimeout(step, 16);
+    } else {
+      cursor.remove();
+      const sig = document.createElement('span');
+      sig.className='signature';
+      sig.textContent = 'Nuno 🦉';
+      el.appendChild(sig);
+    }
+  }
+  step();
+}
+
+const letterSection = document.getElementById('lvl-6');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting && unlockedLevel >= 6){
+      typeLetter();
+    }
+  });
+}, {threshold:0.3});
+observer.observe(letterSection);
+</script>
+
+</body>
+</html>
